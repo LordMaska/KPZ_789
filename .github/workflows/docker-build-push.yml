@@ -25,31 +25,44 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Встановлення pnpm
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      # 3. Встановлення Node.js
+      # 2. Встановлення Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
-          cache-dependency-path: vite-react-boilerplate/pnpm-lock.yaml
 
-      # 4. Встановлення залежностей
+      # 3. Встановлення pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: false
+
+      # 4. Налаштування кешу pnpm
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      # 5. Встановлення залежностей
       - name: Install dependencies
         working-directory: vite-react-boilerplate
         run: pnpm install --frozen-lockfile
 
-      # 5. Збірка проєкту
+      # 6. Збірка проєкту
       - name: Build project
         working-directory: vite-react-boilerplate
         run: pnpm run build
 
-      # 6. Авторизація в GitHub Container Registry
+      # 7. Авторизація в GitHub Container Registry
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -57,7 +70,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 7. Отримання імені репозиторію та імені користувача
+      # 8. Отримання імені репозиторію та імені користувача
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v5
@@ -68,7 +81,7 @@ jobs:
             type=sha,prefix={{branch}}-
             type=semver,pattern={{version}}
 
-      # 8. Збірка та завантаження Docker-образу в GitHub Container Registry
+      # 9. Збірка та завантаження Docker-образу в GitHub Container Registry
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:

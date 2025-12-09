@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, type NavigateOptions } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import toast from './toast';
 
 type InvalidateKey = string | readonly (string | number)[];

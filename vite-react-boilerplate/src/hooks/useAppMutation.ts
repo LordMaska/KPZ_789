@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, type NavigateOptions } from '@tanstack/react-router';
 import toast from './toast';
 
 type InvalidateKey = string | readonly (string | number)[];
@@ -24,6 +24,7 @@ export const useAppMutation = <TData = unknown, TError = unknown, TVariables = v
   options: AppMutationOptions<TData, TVariables, TError> = {}
 ) => {
   const queryClient = useQueryClient();
+  // Used in onSuccess callback below
   const navigate = useNavigate();
 
   const { invalidateQueries, navigateTo, successMessage, errorMessage, onSuccess, onError, ...rest } = options as any;

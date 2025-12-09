@@ -38,8 +38,6 @@ export const useSessions = () => useAppQuery<Session[]>({ queryKey: ['sessions']
 
 export const useSession = (id: string) => useAppQuery<Session>({ queryKey: ['sessions', id], queryFn: () => getSessionById(id) });
 export const useCreateSession = () => {
-  const navigate = useNavigate();
-
   return useAppMutation(createSession, {
     invalidateQueries: [['sessions']],
     navigateTo: '/sessions',
@@ -49,8 +47,6 @@ export const useCreateSession = () => {
 };
 
 export const useUpdateSession = () => {
-  const navigate = useNavigate();
-
   return useAppMutation(updateSession, {
     invalidateQueries: [['sessions']],
     navigateTo: '/sessions',

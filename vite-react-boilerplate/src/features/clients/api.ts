@@ -37,8 +37,6 @@ export const useClients = () => useAppQuery<Client[]>({ queryKey: ['clients'], q
 
 export const useClient = (id: string) => useAppQuery<Client>({ queryKey: ['clients', id], queryFn: () => getClientById(id) });
 export const useCreateClient = () => {
-  const navigate = useNavigate();
-
   return useAppMutation(createClient, {
     invalidateQueries: [['clients']],
     navigateTo: '/clients',
@@ -48,8 +46,6 @@ export const useCreateClient = () => {
 };
 
 export const useUpdateClient = () => {
-  const navigate = useNavigate();
-
   return useAppMutation(updateClient, {
     invalidateQueries: [['clients']],
     navigateTo: '/clients',

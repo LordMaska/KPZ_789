@@ -41,8 +41,6 @@ export const usePCs = () => useAppQuery<PC[]>({ queryKey: ['pcs'], queryFn: getP
 
 export const usePC = (id: string) => useAppQuery<PC>({ queryKey: ['pcs', id], queryFn: () => getPCById(id) });
 export const useCreatePC = () => {
-  const navigate = useNavigate();
-
   return useAppMutation(createPC, {
     invalidateQueries: [['pcs']],
     navigateTo: '/pcs',
@@ -52,8 +50,6 @@ export const useCreatePC = () => {
 };
 
 export const useUpdatePC = () => {
-  const navigate = useNavigate();
-
   return useAppMutation(updatePC, {
     invalidateQueries: [['pcs']],
     navigateTo: '/pcs',

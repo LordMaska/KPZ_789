@@ -1,0 +1,78 @@
+name: Build and Push Frontend Docker Image
+
+on:
+  # Тригер за ручним викликом
+  workflow_dispatch:
+
+  # Тригер за пушем коміту в наступні гілки
+  push:
+    branches:
+      - master
+      - main
+      - 'feature/**'
+
+jobs:
+  build-and-push:
+    name: Build and Push Frontend Docker Image
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # 1. Клонування репозиторію з налаштуваннями за замовчуванням
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Встановлення pnpm
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      # 3. Встановлення Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: vite-react-boilerplate/pnpm-lock.yaml
+
+      # 4. Встановлення залежностей
+      - name: Install dependencies
+        working-directory: vite-react-boilerplate
+        run: pnpm install --frozen-lockfile
+
+      # 5. Збірка проєкту
+      - name: Build project
+        working-directory: vite-react-boilerplate
+        run: pnpm run build
+
+      # 6. Авторизація в GitHub Container Registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 7. Отримання імені репозиторію та імені користувача
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/kpz-frontend
+          tags: |
+            type=ref,event=branch
+            type=sha,prefix={{branch}}-
+            type=semver,pattern={{version}}
+
+      # 8. Збірка та завантаження Docker-образу в GitHub Container Registry
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: vite-react-boilerplate
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

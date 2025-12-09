@@ -54,8 +54,6 @@ function PCDetailPage() {
   };
 
   // Обробка видалення
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-
   const { confirm, Confirm } = useConfirm();
 
   const handleDelete = async () => {

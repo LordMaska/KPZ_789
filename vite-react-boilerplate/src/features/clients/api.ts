@@ -1,10 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query';
 import useAppQuery from '@/hooks/useAppQuery';
-import { useNavigate } from '@tanstack/react-router';
 import apiClient from '@/lib/axios';
 import { Client, ClientCreateSchema, ClientUpdateSchema } from '@/features/clients/types';
 import useAppMutation from '@/hooks/useAppMutation';
-import toast from '@/hooks/toast';
 
 // API-запити з валідацією Zod
 const getClients = async (): Promise<Client[]> => {

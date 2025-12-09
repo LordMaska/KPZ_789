@@ -1,6 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
 import useAppQuery from '@/hooks/useAppQuery';
-import { useNavigate } from '@tanstack/react-router';
 import apiClient from '@/lib/axios';
 import { Session, SessionCreateSchema, SessionUpdateSchema } from '@/features/sessions/types';
 import useAppMutation from '@/hooks/useAppMutation';
